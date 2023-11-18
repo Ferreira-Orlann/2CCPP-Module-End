@@ -29,12 +29,18 @@ namespace LayingGrass
 	// x & y => start at 0
 	class PlacedTile
 	{
+	public:
+		struct Coordonates
+		{
+			uint8_t x;
+			uint8_t y;
+		};
 	protected:
-		uint8_t x;
-		uint8_t y;
+		Coordonates coordonates;
+	public:
 	};
 
-	class PlacedEffectTile : public PlacedTile
+	class EffectTile
 	{
 	public:
 		enum PlacedEffectTileType : uint8_t
@@ -43,11 +49,13 @@ namespace LayingGrass
 			STONE,
 			ROBBERY
 		};
-	private:
-		PlacedEffectTileType type;
+		private:
+			PlacedEffectTileType type;
 	};
 
-	class PlacedShapedTile : public PlacedTile
+	class PlacedEffectTile : public PlacedTile {};
+
+	class PlacedShapedTile : public PlacedTile, public ShapedTile
 	{
 	public:
 		enum Orientation : uint8_t
@@ -58,8 +66,9 @@ namespace LayingGrass
 			LIFT
 		};
 	private:
-		ShapedTile tile;
 		PlayerId pid;
 		PlacedShapedTile::Orientation orientation;
+	public:
+		std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatedVector();
 	};
 }

@@ -4,6 +4,7 @@
 
 #include "player.hpp"
 #include "tile.hpp"
+#include "collision.hpp"
 
 #define SHAPED_TILE_PER_PLAYER 10.67
 
@@ -24,9 +25,8 @@ namespace LayingGrass {
 	private:
 		uint8_t tileCounter;
 		std::vector<LayingGrass::pPlayer> pPlayers;
-		std::vector<LayingGrass::PlacedShapedTile> placedShapedTiles;
 		LayingGrass::PlayerId cpid;
-		std::vector<LayingGrass::PlacedEffectTile> placedEffectTiles;
+		LayingGrass::CollisionEngine engine;
 	public:
 		void RegisterPlayer(LayingGrass::pPlayer player);
 		bool PlaceTile(LayingGrass::ShapedTile shapedTile, uint8_t x, uint8_t y, LayingGrass::PlacedShapedTile::Orientation orientation);

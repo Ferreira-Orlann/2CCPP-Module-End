@@ -7,6 +7,6 @@
 using namespace std;
 
 int main() {
-	cout << "Hello CMake." << sizeof(std::vector<LayingGrass::pPlayer>) << endl;
+	cout << "Hello CMake." << sizeof(LayingGrass::PlacedShapedTile) << endl;
 	return 0;
 }
