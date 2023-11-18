@@ -18,40 +18,38 @@ namespace LayingGrass
 		// std::bitset's memory size => nombre de bits * 8, que l'on arrondi au multiple de 4 inférieur, auquel on ajoite 4 (word size)
 		std::bitset<SHAPE_MATRIX_SIZE> shapeBits; // Memory Usage => 4 octed | 384 pour 96 Tiles  
 		static const std::bitset<TILE_COUNT> shapesData; // Memory Usage => 2400 bits => 304 octets
-		// Total Memory => 784 octets
+		// Total Memory => 784 octets pour 9 joueurs
 		short offset;
 	public:
 		ShapedTile(uint8_t offset);
+	private:
 		std::bitset<SHAPE_MATRIX_SIZE> CreateShapeMatrix();
 	};
 
-	class EffecTile
+	// x & y => start at 0
+	class PlacedTile
 	{
 	protected:
-		virtual void PlayEffect() = 0;
+		uint8_t x;
+		uint8_t y;
 	};
 
-	class CouponEffectTile : public EffecTile
+	class PlacedEffectTile : public PlacedTile
 	{
-		virtual void PlayEffect();
+	public:
+		enum PlacedEffectTileType : uint8_t
+		{
+			COUPON,
+			STONE,
+			ROBBERY
+		};
+	private:
+		PlacedEffectTileType type;
 	};
 
-
-	class StoneEffectTile : public EffecTile
+	class PlacedShapedTile : public PlacedTile
 	{
-		virtual void PlayEffect();
-	};
-
-	class RobberyEffectTile : public EffecTile
-	{
-		virtual void PlayEffect();
-	};
-
-	typedef std::unique_ptr<ShapedTile> upShapedTile;
-
-	// x & y => start at 0
-	struct PlacedShapedTile
-	{
+	public:
 		enum Orientation : uint8_t
 		{
 			TOP,
@@ -59,10 +57,9 @@ namespace LayingGrass
 			RIGHT,
 			LIFT
 		};
-		upShapedTile tile;
-		uint8_t x;
-		uint8_t y;
+	private:
+		ShapedTile tile;
 		PlayerId pid;
-		Orientation orientation;
+		PlacedShapedTile::Orientation orientation;
 	};
 }

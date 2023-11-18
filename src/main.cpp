@@ -2,11 +2,11 @@
 
 
 #include <iostream>
-#include "tile.hpp"
+#include "layinggrass.hpp"
 
 using namespace std;
 
 int main() {
-	cout << "Hello CMake." << endl;
+	cout << "Hello CMake." << sizeof(std::vector<LayingGrass::pPlayer>) << endl;
 	return 0;
 }
