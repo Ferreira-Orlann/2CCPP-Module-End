@@ -3,6 +3,10 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+if (WIN32)
+  set(CMAKE_OBJECT_PATH_MAX 300)
+endif ()
+
 # Activez Rechargement à chaud pour les compilateurs MSVC si cela est pris en charge.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -25,11 +29,22 @@ if (NOT raylib_FOUND)
     )
     FetchContent_MakeAvailable(raylib)
 endif()
+find_package(eigen QUIET)
+if (NOT eigen_FOUND)
+    FetchContent_Declare(
+        eigen
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG 3.4
+    )
+    FetchContent_MakeAvailable(eigen)
+endif()
+
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (${PROJECT_NAME} "src/main.cpp" "src/tile.cpp")
+add_executable (${PROJECT_NAME} "src/main.cpp" "src/tiles.cpp" "src/layinggrass.cpp"  "src/collision.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib eigen)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)

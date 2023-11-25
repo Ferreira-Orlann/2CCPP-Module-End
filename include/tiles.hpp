@@ -2,6 +2,8 @@
 
 #include <bitset>
 #include <memory>
+#include <vector>
+
 #include "player.hpp"
 
 #define SHAPE_COUNT 96
@@ -26,6 +28,19 @@ namespace LayingGrass
 		std::bitset<SHAPE_MATRIX_SIZE> CreateShapeMatrix();
 	};
 
+	class EffectTile
+	{
+	public:
+		enum EffectTileType : uint8_t
+		{
+			COUPON,
+			STONE,
+			ROBBERY
+		};
+	private:
+		EffectTileType type;
+	};
+
 	// x & y => start at 0
 	class PlacedTile
 	{
@@ -38,24 +53,13 @@ namespace LayingGrass
 	protected:
 		Coordonates coordonates;
 	public:
+		virtual std::vector<LayingGrass::PlacedTile::Coordonates> GetCenterCoordonate();
+		virtual std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatesVector();
 	};
 
-	class EffectTile
-	{
-	public:
-		enum PlacedEffectTileType : uint8_t
-		{
-			COUPON,
-			STONE,
-			ROBBERY
-		};
-		private:
-			PlacedEffectTileType type;
-	};
+	class PlacedEffectTile : public LayingGrass::PlacedTile, public LayingGrass::EffectTile {};
 
-	class PlacedEffectTile : public PlacedTile {};
-
-	class PlacedShapedTile : public PlacedTile, public ShapedTile
+	class PlacedShapedTile : public LayingGrass::PlacedTile, public LayingGrass::ShapedTile
 	{
 	public:
 		enum Orientation : uint8_t
@@ -69,6 +73,6 @@ namespace LayingGrass
 		PlayerId pid;
 		PlacedShapedTile::Orientation orientation;
 	public:
-		std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatedVector();
+		virtual std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatesVector();
 	};
 }

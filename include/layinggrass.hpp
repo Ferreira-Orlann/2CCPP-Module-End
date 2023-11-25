@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 #include <vector>
+#include <memory>
 
 #include "player.hpp"
-#include "tile.hpp"
+#include "tiles.hpp"
 #include "collision.hpp"
 
 #define SHAPED_TILE_PER_PLAYER 10.67
@@ -23,12 +24,13 @@ namespace LayingGrass {
 	class LayingGrassInstance
 	{
 	private:
-		uint8_t tileCounter;
-		std::vector<LayingGrass::pPlayer> pPlayers;
-		LayingGrass::PlayerId cpid;
-		LayingGrass::CollisionEngine engine;
+		uint8_t tileCounter = 0;
+		std::vector<LayingGrass::pPlayer> pPlayerVec = std::vector<LayingGrass::pPlayer>();
+		LayingGrass::PlayerId cpid = -1;
+		LayingGrass::CollisionEngine engine = LayingGrass::CollisionEngine();
 	public:
-		void RegisterPlayer(LayingGrass::pPlayer player);
+		LayingGrassInstance(uint8_t playerNb);
+		bool RegisterPlayer(LayingGrass::pPlayer player);
 		bool PlaceTile(LayingGrass::ShapedTile shapedTile, uint8_t x, uint8_t y, LayingGrass::PlacedShapedTile::Orientation orientation);
 		LayingGrass::ShapedTile BuildNextShapedTile() const;
 		struct {
@@ -38,6 +40,7 @@ namespace LayingGrass {
 ;		bool ExchangeCoupon();
 		auto PlacedTilesIterateBegin() const;
 		auto PlacedTilesIterateEnd() const;
+		LayingGrass::pPlayer GetPlayer();
 	};
 
 }
