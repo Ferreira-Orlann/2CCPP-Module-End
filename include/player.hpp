@@ -8,8 +8,10 @@
 namespace LayingGrass
 {
 	typedef uint8_t PlayerId;
+	PlayerId PLAYER_NONE = UINT8_MAX;
+
 	class Player
-	{
+	{	
 	private:
 		PlayerId id;
 		uint8_t coupons;

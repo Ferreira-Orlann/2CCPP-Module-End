@@ -48,13 +48,13 @@ namespace LayingGrass
 		struct Coordonates
 		{
 			uint8_t x;
-			uint8_t y;
+			uint8_t y;	
 		};
 	protected:
 		Coordonates coordonates;
 	public:
-		virtual std::vector<LayingGrass::PlacedTile::Coordonates> GetCenterCoordonate();
-		virtual std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatesVector();
+		LayingGrass::PlacedTile::Coordonates GetCenterCoordonate();
+		virtual void BuildCoordonatesVector(std::vector<LayingGrass::PlacedTile::Coordonates>& contener);
 	};
 
 	class PlacedEffectTile : public LayingGrass::PlacedTile, public LayingGrass::EffectTile {};
@@ -73,6 +73,7 @@ namespace LayingGrass
 		PlayerId pid;
 		PlacedShapedTile::Orientation orientation;
 	public:
-		virtual std::vector<LayingGrass::PlacedTile::Coordonates> BuildCoordonatesVector();
+		virtual void BuildCoordonatesVector(std::vector<LayingGrass::PlacedTile::Coordonates>& contener);
+		PlayerId GetPlayerId();
 	};
 }

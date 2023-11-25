@@ -23,5 +23,5 @@ LayingGrass::ShapedTile LayingGrass::LayingGrassInstance::BuildNextShapedTile() 
 bool LayingGrass::LayingGrassInstance::RockPlace(uint8_t x, uint8_t y)
 {
 
-	return;
+	return true; 
 }
