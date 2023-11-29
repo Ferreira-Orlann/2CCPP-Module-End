@@ -10,6 +10,28 @@
 #define SHAPED_TILE_PER_PLAYER 10.67
 
 namespace LayingGrass {
+	// De base il avais son propre header mais à cause du compilater j'ai été obligé de transféré içi
+	class CollisionEngine
+	{
+	private:
+		std::vector<LayingGrass::PlacedShapedTile> placedShapedTileVec = std::vector<LayingGrass::PlacedShapedTile>();
+		std::vector<LayingGrass::PlacedEffectTile> placedEffectTileVec = std::vector<LayingGrass::PlacedEffectTile>();
+	public:
+		CollisionEngine();
+		void AdjacentShapedTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener);
+		void AdjacentEffectTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener);
+		bool CollideCoordonate(LayingGrass::PlacedTile::Coordonates cOne, LayingGrass::PlacedTile::Coordonates cTwo);
+		bool CollideCoordonates(std::vector<LayingGrass::PlacedTile::Coordonates>& vecOne, std::vector<LayingGrass::PlacedTile::Coordonates>& vecTwo);
+		bool CanPlaceTile(LayingGrass::PlacedTile& tile);
+		bool PlaceShapedTile(LayingGrass::PlacedShapedTile& tile);
+		bool PlaceEffectTile(LayingGrass::PlacedEffectTile& tile);
+		std::vector<LayingGrass::PlacedShapedTile>::iterator ShapedTilesBegin();
+		std::vector<LayingGrass::PlacedShapedTile>::iterator ShapedTilesEnd();
+		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesBegin();
+		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesEnd();
+
+	};
+
 	enum LayingGrassGameState : uint8_t {
 		WAITING_FOR_PLAYERS,
 		WAITING_SHAPED_TILE_PLACE,
@@ -43,5 +65,6 @@ namespace LayingGrass {
 		auto PlacedTilesIterateEnd() const;
 		std::shared_ptr<T> GetPlayer();
 		LayingGrass::LayingGrassGameState GetGameState();
+		std::unique_ptr<LayingGrass::CollisionEngine> GetEngine();
 	};
 }

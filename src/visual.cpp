@@ -23,13 +23,20 @@ void LayingGrass::LayingGrassVisual::WaitingForPlayers()
 	GuiColorPicker(Rectangle(340 + 20, 160 + 20 + 50, 360, 200), "Couleur du joueur", &picked);
 	if (click)
 	{
-		this->RegisterPlayer(std::make_shared<VisualPlayer>(new VisualPlayer()));
+		this->RegisterPlayer(std::make_shared<VisualPlayer>(new VisualPlayer(picked)));
 	}
 }
 
 void LayingGrass::LayingGrassVisual::DrawBoard()
 {
+	std::unique_ptr<LayingGrass::CollisionEngine> ptr = this->GetEngine();
 
+	for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+
+	}
+	for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+
+	}
 }
 
 void LayingGrass::LayingGrassVisual::Render()

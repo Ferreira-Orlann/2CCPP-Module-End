@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-LayingGrass::VisualPlayer LayingGrass::VisualPlayer(Color c)
+LayingGrass::VisualPlayer::VisualPlayer(Color c)
 {
-	VisualPlayer
+	this->color = c;
 }

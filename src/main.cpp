@@ -7,7 +7,7 @@
 using namespace std;
 
 int main() {
-	cout << "Hello CMake." << sizeof(LayingGrass::PlacedShapedTile) << endl;
+	cout << "Hello CMake." << sizeof(LayingGrass::CollisionEngine) << endl;
 	LayingGrass::LayingGrassVisual visual = LayingGrass::LayingGrassVisual();
 	while (visual.ShouldRender())
 	{

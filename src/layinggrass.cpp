@@ -37,3 +37,9 @@ LayingGrass::LayingGrassGameState LayingGrass::LayingGrassInstance<T>::GetGameSt
 {
 	return this->gameState;
 }
+
+template <class T>
+std::unique_ptr<LayingGrass::CollisionEngine> LayingGrass::LayingGrassInstance<T>::GetEngine()
+{
+	return std::make_unique<LayingGrass::CollisionEngine>(this->engine);
+}
