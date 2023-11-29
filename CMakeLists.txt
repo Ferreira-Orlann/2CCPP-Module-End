@@ -20,8 +20,10 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # don't build the supplied example games
+# raylib
 find_package(raylib QUIET)
 if (NOT raylib_FOUND)
+    include(FetchContent)
     FetchContent_Declare(
         raylib
         GIT_REPOSITORY https://github.com/raysan5/raylib.git
@@ -29,22 +31,12 @@ if (NOT raylib_FOUND)
     )
     FetchContent_MakeAvailable(raylib)
 endif()
-find_package(eigen QUIET)
-if (NOT eigen_FOUND)
-    FetchContent_Declare(
-        eigen
-        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-        GIT_TAG 3.4
-    )
-    FetchContent_MakeAvailable(eigen)
-endif()
-
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (${PROJECT_NAME} "src/main.cpp" "src/tiles.cpp" "src/layinggrass.cpp"  "src/collision.cpp")
+add_executable (${PROJECT_NAME} "src/main.cpp" "src/tiles.cpp" "src/layinggrass.cpp"  "src/collision.cpp" "src/visual.cpp" "include/style/style_cyber.h" "src/player.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib eigen)
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)

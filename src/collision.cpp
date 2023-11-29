@@ -1,12 +1,32 @@
 #include "collision.hpp"
 #include <cstdlib>
 
+std::vector<LayingGrass::PlacedShapedTile>::iterator LayingGrass::CollisionEngine::ShapedTilesBegin()
+{
+	return this->placedShapedTileVec.begin();
+}
+
+std::vector<LayingGrass::PlacedShapedTile>::iterator LayingGrass::CollisionEngine::ShapedTilesEnd()
+{
+	return this->placedShapedTileVec.end();
+}
+
+std::vector<LayingGrass::PlacedEffectTile>::iterator LayingGrass::CollisionEngine::EffectTilesBegin()
+{
+	return this->placedEffectTileVec.begin();
+}
+
+std::vector<LayingGrass::PlacedEffectTile>::iterator LayingGrass::CollisionEngine::EffectTilesEnd()
+{
+	return this->placedEffectTileVec.end();
+}
+
 void LayingGrass::CollisionEngine::AdjacentShapedTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener)
 {
 	for (auto tile : this->placedShapedTileVec)
 	{
 		LayingGrass::PlacedTile::Coordonates tcoordonate = tile.GetCenterCoordonate();
-		if (std::abs(origin.x - tcoordonate.x) < 6 || std::abs(origin.y - tcoordonate.y) < 6)
+		if (std::abs(origin.x - tcoordonate.x) < (SHAPE_HEIGHT + 1) || std::abs(origin.y - tcoordonate.y) < (SHAPE_HEIGHT + 1))
 			contener.push_back(tile);
 	}
 }
@@ -16,7 +36,7 @@ void LayingGrass::CollisionEngine::AdjacentEffectTiles(LayingGrass::PlacedTile::
 	for (auto tile : this->placedEffectTileVec)
 	{
 		LayingGrass::PlacedTile::Coordonates tcoordonate = tile.GetCenterCoordonate();
-		if (std::abs(origin.x - tcoordonate.x) < 6 || std::abs(origin.y - tcoordonate.y) < 6)
+		if (std::abs(origin.x - tcoordonate.x) < (SHAPE_HEIGHT + 1) || std::abs(origin.y - tcoordonate.y) < (SHAPE_HEIGHT + 1))
 			contener.push_back(tile);
 	}
 }
@@ -44,31 +64,36 @@ bool LayingGrass::CollisionEngine::CollideCoordonates(std::vector<LayingGrass::P
 	return false;
 }
 
-bool LayingGrass::CollisionEngine::CanPlaceTile(LayingGrass::PlacedTile& tile, PlayerId pid)
+bool LayingGrass::CollisionEngine::CanPlaceTile(LayingGrass::PlacedTile& tile)
 {
+	PlayerId callerPid = tile.GetOwner();
 	std::vector<LayingGrass::PlacedTile> contener;
 	LayingGrass::PlacedTile::Coordonates origin = tile.GetCenterCoordonate();
 	this->AdjacentEffectTiles(origin, contener);
 	this->AdjacentShapedTiles(origin, contener);
 	std::vector<LayingGrass::PlacedTile::Coordonates> tileCoorVec;
 	tile.BuildCoordonatesVector(tileCoorVec);
+	bool territoryCollide = false;
 	for (auto target : contener)
 	{
 		std::vector<LayingGrass::PlacedTile::Coordonates> targetCoorVec;
 		target.BuildCoordonatesVector(targetCoorVec);
 		if (this->CollideCoordonates(tileCoorVec, targetCoorVec))
 		{
-
+			if (callerPid == target.GetOwner())
+				territoryCollide = true;
+			else
+				return false;
 		}
-	
 	}
-
-	return false;
+	if (!territoryCollide)
+		return false;
+	return true;
 }
 
 bool LayingGrass::CollisionEngine::PlaceShapedTile(LayingGrass::PlacedShapedTile& tile)
 {
-	if (this->CanPlaceTile(tile, tile.GetPlayerId()))
+	if (this->CanPlaceTile(tile))
 	{
 		this->placedShapedTileVec.push_back(tile);
 		return true;
@@ -78,9 +103,10 @@ bool LayingGrass::CollisionEngine::PlaceShapedTile(LayingGrass::PlacedShapedTile
 
 bool LayingGrass::CollisionEngine::PlaceEffectTile(LayingGrass::PlacedEffectTile& tile)
 {
-	if (this->CanPlaceTile(tile, PLAYER_NONE))
+	if (this->CanPlaceTile(tile))
 	{
 		this->placedEffectTileVec.push_back(tile);
+		// A Faire => Effect Detection (switch)
 		return true;
 	}
 	return false;
