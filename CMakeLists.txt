@@ -33,7 +33,7 @@ if (NOT raylib_FOUND)
 endif()
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (${PROJECT_NAME} "src/main.cpp" "src/tiles.cpp" "src/layinggrass.cpp"  "src/collision.cpp" "src/visual.cpp" "include/style/style_cyber.h" "src/player.cpp")
+add_executable (${PROJECT_NAME} "src/main.cpp" "src/tiles.cpp" "src/collision.cpp" "src/visual.cpp" "include/style/style_cyber.h" "src/player.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib)

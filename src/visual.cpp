@@ -1,10 +1,10 @@
+#include "layinggrass.hpp"
 #include "visual.hpp"
 
 #include "raylib.h"
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include "style/style_cyber.h"
-#include <iostream>
 
 LayingGrass::LayingGrassVisual::LayingGrassVisual()
 {
@@ -23,7 +23,8 @@ void LayingGrass::LayingGrassVisual::WaitingForPlayers()
 	GuiColorPicker(Rectangle(340 + 20, 160 + 20 + 50, 360, 200), "Couleur du joueur", &picked);
 	if (click)
 	{
-		this->RegisterPlayer(std::make_shared<VisualPlayer>(new VisualPlayer(picked)));
+		std::shared_ptr<LayingGrass::VisualPlayer> ptr = std::shared_ptr<LayingGrass::VisualPlayer>(new VisualPlayer(picked));
+		this->RegisterPlayer(ptr);
 	}
 }
 
@@ -31,11 +32,30 @@ void LayingGrass::LayingGrassVisual::DrawBoard()
 {
 	std::unique_ptr<LayingGrass::CollisionEngine> ptr = this->GetEngine();
 
-	for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+	Rectangle rec;
+	if (this->GetPlayerCount() < 5)
+	{
+		rec = { 100,100,(20*10)+(20*2),(20 * 10) + (20 * 2) + 4};
+		DrawRectangleLinesEx(rec, 2, BLACK);
 
+
+		for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+
+		}
+		for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+
+		}
 	}
-	for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+	else
+	{
+		rec = { 0,0,0,0 };
+		rec = { 100,100,(30 * 10) + (30 * 2),(30 * 10) + (30 * 2) + 4 };
+		for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
 
+		}
+		for (auto it = ptr->EffectTilesBegin(); it != ptr->EffectTilesEnd(); ++it) {
+
+		}
 	}
 }
 
@@ -47,7 +67,8 @@ void LayingGrass::LayingGrassVisual::Render()
 		case WAITING_FOR_PLAYERS:
 			WaitingForPlayers();
 			break;
-		default:
+		case WAITING_SHAPED_TILE_PLACE:
+			this->DrawBoard();
 			break;
 		}
 		ClearBackground(DARKGRAY);

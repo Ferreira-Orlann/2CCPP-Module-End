@@ -17,7 +17,6 @@ namespace LayingGrass {
 		std::vector<LayingGrass::PlacedShapedTile> placedShapedTileVec = std::vector<LayingGrass::PlacedShapedTile>();
 		std::vector<LayingGrass::PlacedEffectTile> placedEffectTileVec = std::vector<LayingGrass::PlacedEffectTile>();
 	public:
-		CollisionEngine();
 		void AdjacentShapedTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener);
 		void AdjacentEffectTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener);
 		bool CollideCoordonate(LayingGrass::PlacedTile::Coordonates cOne, LayingGrass::PlacedTile::Coordonates cTwo);
@@ -29,7 +28,6 @@ namespace LayingGrass {
 		std::vector<LayingGrass::PlacedShapedTile>::iterator ShapedTilesEnd();
 		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesBegin();
 		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesEnd();
-
 	};
 
 	enum LayingGrassGameState : uint8_t {
@@ -42,16 +40,17 @@ namespace LayingGrass {
 		END
 	};
 
-	template <class T>
+	template <typename T>
 	class LayingGrassInstance
 	{
 	private:
 		uint8_t tileCounter = 0;
-		std::vector<std::shared_ptr<T>> pPlayerVec = std::vector<std::shared_ptr<T>>(9);
+		std::vector<std::shared_ptr<T>> pPlayerVec = std::vector<std::shared_ptr<T>>();
 		LayingGrass::PlayerId cpid = -1;
-		LayingGrassGameState gameState = WAITING_FOR_PLAYERS;
+		LayingGrassGameState gameState = WAITING_SHAPED_TILE_PLACE;
 		LayingGrass::CollisionEngine engine;
 	public:
+		LayingGrassInstance();
 		bool RegisterPlayer(std::shared_ptr<T> player);
 		bool PlaceTile(LayingGrass::ShapedTile shapedTile, uint8_t x, uint8_t y, LayingGrass::PlacedShapedTile::Orientation orientation);
 		LayingGrass::ShapedTile BuildNextShapedTile() const;
@@ -62,9 +61,69 @@ namespace LayingGrass {
 		void Start();
 ;		bool ExchangeCoupon();
 		auto PlacedTilesIterateBegin() const;
-		auto PlacedTilesIterateEnd() const;
+		auto PlacedTilesIterateEnd() const;	
 		std::shared_ptr<T> GetPlayer();
 		LayingGrass::LayingGrassGameState GetGameState();
 		std::unique_ptr<LayingGrass::CollisionEngine> GetEngine();
+		size_t GetPlayerCount();
 	};
+
+
+	// Obligé de faire les template dans un .hpp ou .h
+	template <typename T>
+	LayingGrass::LayingGrassInstance<T>::LayingGrassInstance()
+	{
+		this->pPlayerVec.reserve(9);
+	}
+
+	template <typename  T>
+	bool LayingGrass::LayingGrassInstance<T>::RegisterPlayer(std::shared_ptr<T> player)
+	{
+		if (this->pPlayerVec.size() == this->pPlayerVec.capacity())
+		{
+			this->Start();
+			return false;
+		}
+		this->pPlayerVec.push_back(player);
+		return true;
+	}
+
+	template <typename T>
+	LayingGrass::ShapedTile LayingGrass::LayingGrassInstance<T>::BuildNextShapedTile() const
+	{
+		return NULL;
+	}
+
+	template <typename  T>
+	bool LayingGrass::LayingGrassInstance<T>::RockPlace(uint8_t x, uint8_t y)
+	{
+
+		return true;
+	}
+
+	template <typename  T>
+	void LayingGrass::LayingGrassInstance<T>::Start()
+	{
+		this->pPlayerVec.shrink_to_fit();
+		this->gameState = WAITING_SHAPED_TILE_PLACE;
+	}
+
+	template <typename  T>
+	LayingGrass::LayingGrassGameState LayingGrass::LayingGrassInstance<T>::GetGameState()
+	{
+		return this->gameState;
+	}
+
+	template <typename  T>
+	std::unique_ptr<LayingGrass::CollisionEngine> LayingGrass::LayingGrassInstance<T>::GetEngine()
+	{
+		return std::make_unique<LayingGrass::CollisionEngine>(this->engine);
+	}
+
+	template <typename  T>
+	size_t LayingGrass::LayingGrassInstance<T>::GetPlayerCount()
+	{
+		return this->pPlayerVec.size();
+	}
+	////////////////////////////////////////////////////////////////////////////////////
 }
