@@ -11,7 +11,6 @@ LayingGrass::PlacedShapedTile::PlacedShapedTile(LayingGrass::PlacedTile::Coordon
 }
 
 LayingGrass::PlacedTile::Coordonates invalidCoordonate = LayingGrass::PlacedTile::Coordonates(UINT8_MAX, UINT8_MAX);
-
 LayingGrass::PlacedTile::Coordonates LayingGrass::GetInvalidCoordonate()
 {
 	return invalidCoordonate;

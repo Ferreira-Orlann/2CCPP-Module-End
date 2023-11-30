@@ -16,9 +16,23 @@ namespace LayingGrass {
 	// De base il avais son propre header mais à cause du compilater j'ai été obligé de transféré içi
 	class CollisionEngine
 	{
+	public:
+		struct ShapedGetterResult
+		{
+			bool result;
+			PlacedShapedTile data;
+		};
+
+		struct EffectGetterResult
+		{
+			bool result;
+			PlacedEffectTile data;
+		};
+
 	private:
 		std::vector<LayingGrass::PlacedShapedTile> placedShapedTileVec = std::vector<LayingGrass::PlacedShapedTile>();
 		std::vector<LayingGrass::PlacedEffectTile> placedEffectTileVec = std::vector<LayingGrass::PlacedEffectTile>();
+		size_t boardSize;
 	public:
 		void AdjacentShapedTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedShapedTile>& contener);
 		void AdjacentEffectTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedEffectTile>& contener);
@@ -33,8 +47,11 @@ namespace LayingGrass {
 		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesEnd();
 		std::vector<LayingGrass::PlacedShapedTile>& GetPlacedShapedTileVector();
 		std::vector<LayingGrass::PlacedEffectTile>& GetPlacedEffectTileVector();
-		LayingGrass::PlacedEffectTile& GetPlacedShapedTile(LayingGrass::PlacedTile::Coordonates coordonate);
-		LayingGrass::PlacedEffectTile& GetPlacedEffectTile(LayingGrass::PlacedTile::Coordonates coordonate);
+		ShapedGetterResult GetPlacedShapedTile(LayingGrass::PlacedTile::Coordonates coordonate);
+		EffectGetterResult GetPlacedEffectTile(LayingGrass::PlacedTile::Coordonates coordonate);
+		void DeteteAt(LayingGrass::PlacedTile::Coordonates center);
+		size_t GetBoardSize();
+		void SetBoardSize(size_t size);
 	};
 
 	enum LayingGrassGameState : uint8_t {
@@ -58,6 +75,8 @@ namespace LayingGrass {
 		LayingGrass::PlayerId cpid = -1;
 		LayingGrassGameState gameState = WAITING_FOR_PLAYERS;
 		LayingGrass::CollisionEngine engine;
+		uint8_t round = 0;
+		std::vector<size_t> skippedTiles = std::vector<size_t>();
 	protected:
 		void SetGameState(LayingGrass::LayingGrassGameState state);
 		LayingGrass::PlacedShapedTile::Orientation orientation = LayingGrass::PlacedShapedTile::Orientation::TOP;
@@ -78,13 +97,34 @@ namespace LayingGrass {
 		LayingGrass::CollisionEngine& GetEngine();
 		size_t GetPlayerCount();
 		void PlayerActionEnd();
+		size_t GetBoardSize();
+		uint8_t GetTileCounter();
 	};
-
 
 	// Obligé de faire les template dans un .hpp ou .h
 	template <typename T>
+	uint8_t LayingGrass::LayingGrassInstance<T>::GetTileCounter()
+	{
+		if (this->tileCounter < std::ceil(this->GetPlayerCount() * 10.67))
+		{
+			return this->tileCounter;
+		} 
+		return size this->skippedTiles.front();
+	}
+
+	template <typename T>
+	size_t LayingGrass::LayingGrassInstance<T>::GetBoardSize(){
+		if (this->GetPlayerCount() < 5)
+		{
+			return 20;
+		}
+		return 30;
+	};
+
+	template <typename T>
 	LayingGrass::LayingGrassInstance<T>::LayingGrassInstance()
 	{
+		this->engine.SetBoardSize(this->GetBoardSize());
 		this->pPlayerVec.reserve(9);
 		std::string str = "0000000000000000000000001100000000000000000000000000000000000000010000001110000000000000000000000000000000001000000100000111000000000000000000000000000000000000000010000011100000100000000000000000000000000000000000100001110000100000000000000000000000000000000000110000011000000000000000000000000000000000000000101000011100000000000000000000000000000000000000000000001110000000000000000000000000000000000000000100000110000010000000000000000000000000000000000100000011000000000000000000000000000000000000000000100000110000110000000000000000000000000000000000000000011000000000000000000000000000000000010000011000001000000100000011000000000000000000011100001000000100000010000001000000000000000000000100000010000001100011100011000000000000000000000000000001000001100001100000100000000000000000000000000001000001110000110000000000000000000000000000000000000000111000000000000000000000000000000000000000010000001100000100000010000000000000000000000000000110000110000011000000000000000000000000000000000100000110000011100000000000000000000000000100000010000011100001000000000000000000000000000000000010000001100000000000000000000000000000000000000000110000011000001100000000000000000000000001110000010000001000000100000000000000000000000000100000011000000110000001100000000000000000000000000000000000001111100000000000000000000000000000000000000100000011100000010000001000000000000000000010000001100000100000011000001000000000000000000000000000100000011000001100000100000000000000000000100000010000001000001110000101000000000000000000000000000000000110000000000000000000000000000000000000001000000111000010110000000000000000000000000010000001000001100000100000010000000000000000000110000001000000111000110000010000000000000000000001000000100000011000001000000000000000000000000000000000001000001100000100000000000000000000000000000000010010001111000000000000000000000000000000000000000011010000101111110000000000000000000000001000000100000011000000111000000000000000000000000110000001100001100000011000001000000000000000000000000000100000011000001100000000000000000000000000000000010000001000001111000000000000000000000000000000001100000110000000000000000000000000000000000000000010000011000001100000100000000000000000000000000111000001000001100000000000000000000000000000000000000001111000000000000000000000000000000000000000100000111000000000000000000000000000000000000001000000100000011110000000000000000000000000000000001100001100000011100000000000000000000000000000000010000011000001000000100000000000000000000000000100000011100000000000000000000000000000000010000001100000100000010000001000000000000000000001110000100000010000001000011100000000000000100000010000011000001000000110000010000000000000000000000000000000001111000000000000000000000000000000000000001100000010000001110000001000000000000000000100000010000011100000100000010000000000000000000010000001000011100000000000000000000000000010000001000000100000010000001000000100000000000000000000000000101000011100000100000110000000000000000000000000001000011100000111000010000000000000000000001100000100000010000011100000000000000000000000000100000010000001100000100000010000000000000000000110000001000000101000111100000000000000000000000001000001100001100000100000011000000000000000000000110000010000001000000100000110000010000000000000000000010100001111000000000000000000000000000000110000001010000101000011100000000000000000000000000100000011000001000000100000010000000000000000001000000101000011110000100000010000000000000011000001000000100000010000001000000100000010000000000000000000010000011100001000000100000000000000000000000000000000000110000000000000000000000000000000000000000010000101000011100000000000000000000000000000000010000011100001010000000000000000000000000010000001000011111000010000001000000000000001000001100000100000010000011000011000000000000000000001100000100000011000001000000110000000000000000000010000001000000100000111100001000000000000000000000100000110000010000001000000100000000000000000000000000011000001000001100000100000000000000110000010000011000000110000010000001000000000000110000011000000110000010000001000000100000000000000000000100000011000011000000100000000000000000000000000000000011000001111000000000000000000000000000000000110001110000100000011000000000000000000000000000110000010000001000001100000000000000000000000000010000001000001110000010000000000000000000000000011100001010000100000011000000000000000000000000000100000011000011000001000000000000000000000000000000000010000001100000111000000000000000000000000001000000100000010000001100000000000000000000000000000000010000011110001000000000000000000000000000000000001100001100000100000010000000000000000000000000000100000110000010000001100000000000000000000000000000000001000000000000000000000000";
 		for (int i = 0; i < str.size(); i++)
@@ -101,6 +141,39 @@ namespace LayingGrass {
 			}
 			LayingGrass::GetShapesData()[i] = b;
 		}
+	}
+
+	template <typename T>
+	bool LayingGrass::LayingGrassInstance<T>::RegisterPlayer(std::shared_ptr<T> player)
+	{
+		if (this->pPlayerVec.size() == this->pPlayerVec.capacity())
+		{
+			this->Start();
+			return false;
+		}
+		this->pPlayerVec.push_back(player);
+		return true;
+	}
+
+	template <typename T>
+	LayingGrass::PlacedShapedTile LayingGrass::LayingGrassInstance<T>::BuildNextShapedTile() const
+	{
+		return LayingGrass::PlacedShapedTile(LayingGrass::PlacedTile::Coordonates(3,3), this->orientation, this->cpid, this->GetTileCounter());
+	}
+
+	template <typename T>
+	bool LayingGrass::LayingGrassInstance<T>::RockPlace(uint8_t x, uint8_t y)
+	{
+
+		return true;
+	}
+
+	template <typename T>
+	void LayingGrass::LayingGrassInstance<T>::Start()
+	{
+		this->pPlayerVec.shrink_to_fit();
+		this->gameState = TERRITORY;
+		this->cpid = 0;
 
 		LayingGrass::CollisionEngine engine = this->GetEngine();
 		std::random_device rd;
@@ -121,39 +194,6 @@ namespace LayingGrass {
 			LayingGrass::PlacedEffectTile tile = LayingGrass::PlacedEffectTile(LayingGrass::PlacedTile::Coordonates(distr(gen), distr(gen)), LayingGrass::EffectTile::EffectTileType::ROBBERY);
 			engine.PlaceEffectTile(tile);
 		}
-	}
-
-	template <typename T>
-	bool LayingGrass::LayingGrassInstance<T>::RegisterPlayer(std::shared_ptr<T> player)
-	{
-		if (this->pPlayerVec.size() == this->pPlayerVec.capacity())
-		{
-			this->Start();
-			return false;
-		}
-		this->pPlayerVec.push_back(player);
-		return true;
-	}
-
-	template <typename T>
-	LayingGrass::PlacedShapedTile LayingGrass::LayingGrassInstance<T>::BuildNextShapedTile() const
-	{
-		return LayingGrass::PlacedShapedTile(LayingGrass::PlacedTile::Coordonates(3,3), this->orientation, this->cpid, this->tileCounter);
-	}
-
-	template <typename T>
-	bool LayingGrass::LayingGrassInstance<T>::RockPlace(uint8_t x, uint8_t y)
-	{
-
-		return true;
-	}
-
-	template <typename T>
-	void LayingGrass::LayingGrassInstance<T>::Start()
-	{
-		this->pPlayerVec.shrink_to_fit();
-		this->gameState = TERRITORY;
-		this->cpid = 0;
 	}
 
 	template <typename T>
@@ -183,8 +223,11 @@ namespace LayingGrass {
 	template <typename T>
 	void LayingGrass::LayingGrassInstance<T>::PlaceTile(LayingGrass::PlacedTile::Coordonates coordonate, LayingGrass::PlacedShapedTile::Orientation orientation)
 	{
-		if(this->PlaceTileEx(coordonate, orientation, this->tileCounter))
-			this->tileCounter++;
+		if(this->PlaceTileEx(coordonate, orientation, this->GetTileCounter())
+			if (this->tileCounter < std::ceil(this->GetPlayerCount() * 10.67))
+				this->tileCounter++;
+			else
+				this->skippedTiles.erase(this->skippedTiles.begin());
 	}
 
 	template <typename T>
@@ -209,6 +252,11 @@ namespace LayingGrass {
 				this->gameState = LayingGrass::LayingGrassGameState::WAITING_SHAPED_TILE_PLACE;
 			}		
 			this->cpid = 0;
+			this->round++;
+			if (this->round == 9)
+			{
+
+			}
 		}
 	}
 

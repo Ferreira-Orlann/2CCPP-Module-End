@@ -67,6 +67,7 @@ void LayingGrass::LayingGrassVisual::DrawBoard()
 		DrawRectangleLinesEx(rec, 2, BLACK);
 
 		for (PlacedEffectTile tile : engine.GetPlacedEffectTileVector()) {
+			fprintf(stdout, "TEST: %d\n", tile.GetOwner());
 			Rectangle cell = { rec.x + 20 * tile.GetCenterCoordonate().x, rec.y + 20 * tile.GetCenterCoordonate().y, 20, 20};
 			DrawRectangleRec(cell, BLACK);
 			switch (tile.GetType())
@@ -123,6 +124,13 @@ void LayingGrass::LayingGrassVisual::Render()
 		case WAITING_SHAPED_TILE_PLACE:
 			this->DrawBoard();
 			this->DrawNextTile();
+
+			break;
+		case WAITING_ROBBERY_SELECT:
+			this->DrawBoard();
+			break;
+		case WAITING_ROBBERY_PLACE:
+			this->DrawBoard();
 			break;
 		}
 		ClearBackground(DARKGRAY);

@@ -59,12 +59,6 @@ namespace LayingGrass
 		public:
 			Coordonates() {};
 			Coordonates(uint8_t x, uint8_t y) : x(x), y(y) {};
-			bool operator ==(const Coordonates& c)
-			{
-				if (c.x == x && c.y == y)
-					return true;
-				return false;
-			}
 		};
 	protected:
 		Coordonates coordonates;
@@ -93,7 +87,7 @@ namespace LayingGrass
 			LEFT
 
 		};
-	private:
+	private:		
 		PlayerId pid;
 		PlacedShapedTile::Orientation orientation;
 	public:
