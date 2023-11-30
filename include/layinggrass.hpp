@@ -33,6 +33,7 @@ namespace LayingGrass {
 		std::vector<LayingGrass::PlacedEffectTile>::iterator EffectTilesEnd();
 		std::vector<LayingGrass::PlacedShapedTile>& GetPlacedShapedTileVector();
 		std::vector<LayingGrass::PlacedEffectTile>& GetPlacedEffectTileVector();
+		LayingGrass::PlacedEffectTile& GetPlacedShapedTile(LayingGrass::PlacedTile::Coordonates coordonate);
 		LayingGrass::PlacedEffectTile& GetPlacedEffectTile(LayingGrass::PlacedTile::Coordonates coordonate);
 	};
 
