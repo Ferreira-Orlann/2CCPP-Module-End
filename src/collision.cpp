@@ -21,6 +21,17 @@ std::vector<LayingGrass::PlacedEffectTile>::iterator LayingGrass::CollisionEngin
 	return this->placedEffectTileVec.end();
 }
 
+std::vector<LayingGrass::PlacedEffectTile>& LayingGrass::CollisionEngine::GetPlacedEffectTileVector()
+{
+	return this->placedEffectTileVec;
+}
+
+std::vector<LayingGrass::PlacedShapedTile>& LayingGrass::CollisionEngine::GetPlacedShapedTileVector()
+{
+	return this->placedShapedTileVec;
+}
+
+
 void LayingGrass::CollisionEngine::AdjacentShapedTiles(LayingGrass::PlacedTile::Coordonates origin, std::vector<LayingGrass::PlacedTile> contener)
 {
 	for (auto tile : this->placedShapedTileVec)
@@ -91,8 +102,13 @@ bool LayingGrass::CollisionEngine::CanPlaceTile(LayingGrass::PlacedTile& tile)
 	return true;
 }
 
-bool LayingGrass::CollisionEngine::PlaceShapedTile(LayingGrass::PlacedShapedTile& tile)
+bool LayingGrass::CollisionEngine::PlaceShapedTile(LayingGrass::PlacedShapedTile tile, bool bypass)
 {
+	if (bypass)
+	{
+		this->placedShapedTileVec.push_back(tile);
+		return true;
+	}
 	if (this->CanPlaceTile(tile))
 	{
 		this->placedShapedTileVec.push_back(tile);
@@ -101,7 +117,7 @@ bool LayingGrass::CollisionEngine::PlaceShapedTile(LayingGrass::PlacedShapedTile
 	return false;
 }
 
-bool LayingGrass::CollisionEngine::PlaceEffectTile(LayingGrass::PlacedEffectTile& tile)
+bool LayingGrass::CollisionEngine::PlaceEffectTile(LayingGrass::PlacedEffectTile tile)
 {
 	if (this->CanPlaceTile(tile))
 	{
@@ -111,3 +127,4 @@ bool LayingGrass::CollisionEngine::PlaceEffectTile(LayingGrass::PlacedEffectTile
 	}
 	return false;
 }
+

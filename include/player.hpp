@@ -18,6 +18,8 @@ namespace LayingGrass
 		PlayerId id;
 		uint8_t coupons;
 		size_t territorySize;
+	protected:
+		void SetPlayerId(LayingGrass::PlayerId id);
 	public:
 		void IncrementTerritorySize();
 		void DecrementTerritorySize();
@@ -32,7 +34,7 @@ namespace LayingGrass
 	private:
 		Color color;
 	public:
-		VisualPlayer(Color c);
+		VisualPlayer(Color c, PlayerId id);
 		Color GetColor();
 	};
 }

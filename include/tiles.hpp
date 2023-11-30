@@ -16,15 +16,13 @@ namespace LayingGrass
 	// Represent a shape
 	// Only computing, doesn't have any graphic elements
 	
-	const std::bitset<TILE_COUNT> shapesData = {}; // Memory Usage => 2400 bits => 304 octets
-	
 	class ShapedTile
 	{
 	private:
 		// std::bitset's memory size => nombre de bits * 8, que l'on arrondi au multiple de 4 inférieur, auquel on ajoite 4 (word size)
 		std::bitset<SHAPE_MATRIX_SIZE> shapeBits = {}; // Memory Usage => 4 octed | 384 pour 96 Tiles  
 		// Total Memory => 784 octets pour 9 joueurs
-		short offset;
+		uint8_t offset;
 	public:
 		ShapedTile(uint8_t offset);
 	protected:
@@ -32,6 +30,8 @@ namespace LayingGrass
 	private:
 		std::bitset<SHAPE_MATRIX_SIZE> CreateShapeMatrix();
 	};
+
+	std::bitset<TILE_COUNT + 1 * SHAPE_MATRIX_SIZE>& GetShapesData();
 
 	class EffectTile
 	{
@@ -42,7 +42,7 @@ namespace LayingGrass
 			STONE,
 			ROBBERY
 		};
-	private:
+	protected:
 		EffectTileType type;
 	public:
 		EffectTile::EffectTileType GetType();
@@ -55,17 +55,26 @@ namespace LayingGrass
 		struct Coordonates
 		{
 			uint8_t x;
-			uint8_t y;	
+			uint8_t y;
+		public:
+			Coordonates() {};
+			Coordonates(uint8_t x, uint8_t y) : x(x), y(y) {};
 		};
 	protected:
 		Coordonates coordonates;
 	public:
+		PlacedTile(PlacedTile::Coordonates coordonate);
 		LayingGrass::PlacedTile::Coordonates GetCenterCoordonate();
 		virtual void BuildCoordonatesVector(std::vector<LayingGrass::PlacedTile::Coordonates>& contener);
 		virtual PlayerId GetOwner();
-	};
+	}; 
 
-	class PlacedEffectTile : public LayingGrass::PlacedTile, public LayingGrass::EffectTile {};
+	LayingGrass::PlacedTile::Coordonates GetInvalidCoordonate();
+
+	class PlacedEffectTile : public LayingGrass::PlacedTile, public LayingGrass::EffectTile {
+	public:
+		PlacedEffectTile(LayingGrass::PlacedTile::Coordonates coordonate, EffectTile::EffectTileType type);
+	};
 
 	class PlacedShapedTile : public LayingGrass::PlacedTile, public LayingGrass::ShapedTile
 	{
@@ -81,6 +90,7 @@ namespace LayingGrass
 		PlayerId pid;
 		PlacedShapedTile::Orientation orientation;
 	public:
+		PlacedShapedTile(LayingGrass::PlacedTile::Coordonates coordonate, Orientation orientation, PlayerId pid, uint8_t offset);
 		virtual void BuildCoordonatesVector(std::vector<LayingGrass::PlacedTile::Coordonates>& contener);
 		virtual PlayerId GetOwner();
 	};
