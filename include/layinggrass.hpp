@@ -194,6 +194,7 @@ namespace LayingGrass {
 			LayingGrass::PlacedEffectTile tile = LayingGrass::PlacedEffectTile(LayingGrass::PlacedTile::Coordonates(distr(gen), distr(gen)), LayingGrass::EffectTile::EffectTileType::ROBBERY);
 			engine.PlaceEffectTile(tile);
 		}
+		fprintf(stdout, "Start: %d\n", this->GetEngine().GetPlacedEffectTileVector().size());
 	}
 
 	template <typename T>
