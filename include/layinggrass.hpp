@@ -85,7 +85,7 @@ namespace LayingGrass {
 		bool RegisterPlayer(std::shared_ptr<T> player);
 		void PlaceTile(LayingGrass::PlacedTile::Coordonates coordonate, LayingGrass::PlacedShapedTile::Orientation orientation);
 		bool PlaceTileEx(LayingGrass::PlacedTile::Coordonates coordonate, LayingGrass::PlacedShapedTile::Orientation orientation, uint8_t offset);
-		LayingGrass::PlacedShapedTile BuildNextShapedTile() const;
+		LayingGrass::PlacedShapedTile BuildNextShapedTile();
 		struct {
 			LayingGrass::ShapedTile data[5];
 		} BuildExchangeShapedTile();
@@ -109,7 +109,7 @@ namespace LayingGrass {
 		{
 			return this->tileCounter;
 		} 
-		return size this->skippedTiles.front();
+		return this->skippedTiles.front();
 	}
 
 	template <typename T>
@@ -156,7 +156,7 @@ namespace LayingGrass {
 	}
 
 	template <typename T>
-	LayingGrass::PlacedShapedTile LayingGrass::LayingGrassInstance<T>::BuildNextShapedTile() const
+	LayingGrass::PlacedShapedTile LayingGrass::LayingGrassInstance<T>::BuildNextShapedTile()
 	{
 		return LayingGrass::PlacedShapedTile(LayingGrass::PlacedTile::Coordonates(3,3), this->orientation, this->cpid, this->GetTileCounter());
 	}
@@ -223,11 +223,13 @@ namespace LayingGrass {
 	template <typename T>
 	void LayingGrass::LayingGrassInstance<T>::PlaceTile(LayingGrass::PlacedTile::Coordonates coordonate, LayingGrass::PlacedShapedTile::Orientation orientation)
 	{
-		if(this->PlaceTileEx(coordonate, orientation, this->GetTileCounter())
+		if (this->PlaceTileEx(coordonate, orientation, this->GetTileCounter()))
+		{
 			if (this->tileCounter < std::ceil(this->GetPlayerCount() * 10.67))
 				this->tileCounter++;
 			else
 				this->skippedTiles.erase(this->skippedTiles.begin());
+		}
 	}
 
 	template <typename T>
