@@ -16,6 +16,27 @@ LayingGrass::LayingGrassVisual::LayingGrassVisual()
 	GuiLoadStyleCyber();
 }
 
+void LayingGrass::LayingGrassVisual::DrawNextTile()
+{
+	std::vector<LayingGrass::PlacedTile::Coordonates> vec = std::vector<LayingGrass::PlacedTile::Coordonates>();
+	this->BuildNextShapedTile().BuildCoordonatesVector(vec);
+	Color c = GREEN;
+	for (LayingGrass::PlacedTile::Coordonates coordonate : vec)
+	{
+
+		Rectangle cell = { 700 + 20 * coordonate.x, 160 + 20 * coordonate.y, 20, 20 };
+		DrawRectangleRec(cell, c);
+	}
+	for (int i = 0; i < SHAPE_HEIGHT; i++)
+	{
+		for (int j = 0; j < SHAPE_HEIGHT; j++)
+		{
+			Rectangle cell = { 700 + 20 * i, 160 + 20 * j, 20, 20 };
+			DrawRectangleLinesEx(cell, 1, BLACK);
+		}
+	}
+}
+
 void LayingGrass::LayingGrassVisual::WaitingForPlayers()
 {
 	Rectangle rec = Rectangle(340, 160, 400, 400);
@@ -29,7 +50,7 @@ void LayingGrass::LayingGrassVisual::WaitingForPlayers()
 		this->RegisterPlayer(ptr);
 	}
 	click = GuiButton(Rectangle(340 + 45, 160 + 45, 380, 20), std::format("{}{}{}", "Start: ", this->GetPlayerCount(), " Joueurs").c_str());
-	if (click)
+	if (click && this->GetPlayerCount() > 1)
 	{
 		this->Start();
 	}
@@ -101,6 +122,7 @@ void LayingGrass::LayingGrassVisual::Render()
 			break;
 		case WAITING_SHAPED_TILE_PLACE:
 			this->DrawBoard();
+			this->DrawNextTile();
 			break;
 		}
 		ClearBackground(DARKGRAY);
@@ -134,25 +156,44 @@ LayingGrass::PlacedTile::Coordonates LayingGrass::LayingGrassVisual::BoardProces
 
 void LayingGrass::LayingGrassVisual::ProcessInputs()
 {
-	LayingGrass::PlacedTile::Coordonates coordonate = this->BoardProcessInputs();
-	LayingGrass::PlacedTile::Coordonates invalidCoordonate = GetInvalidCoordonate();
+	LayingGrass::PlacedTile::Coordonates boardCoordonates = this->BoardProcessInputs();
+	LayingGrass::PlacedTile::Coordonates invalidCoordonates = GetInvalidCoordonate();
+	if (IsKeyPressed(KEY_R))
+	{
+		switch (this->orientation)
+		{
+		case LayingGrass::PlacedShapedTile::Orientation::TOP:
+			this->orientation = LayingGrass::PlacedShapedTile::Orientation::RIGHT;
+			break;
+		case LayingGrass::PlacedShapedTile::Orientation::DOWN:
+			this->orientation = LayingGrass::PlacedShapedTile::Orientation::LEFT;
+			break;
+		case LayingGrass::PlacedShapedTile::Orientation::RIGHT:
+			this->orientation = LayingGrass::PlacedShapedTile::Orientation::DOWN;
+			break;
+		case LayingGrass::PlacedShapedTile::Orientation::LEFT:
+			this->orientation = LayingGrass::PlacedShapedTile::Orientation::TOP;
+			break;
+		}
+		
+	}
 	switch (this->GetGameState())
 	{
 	case WAITING_FOR_PLAYERS:
 		break;
 	case TERRITORY:
-		if (coordonate.x == invalidCoordonate.x or coordonate.y == invalidCoordonate.y)
+		if (boardCoordonates.x == invalidCoordonates.x or boardCoordonates.y == invalidCoordonates.y)
 		{
 			break;
 		}
-		this->PlaceTileEx(coordonate, this->orientation, SHAPE_COUNT);
+		this->PlaceTileEx(boardCoordonates, this->orientation, SHAPE_COUNT);
 		break;
 	case WAITING_SHAPED_TILE_PLACE:
-		if (coordonate.x == invalidCoordonate.x or coordonate.y == invalidCoordonate.y)
+		if (boardCoordonates.x == invalidCoordonates.x or boardCoordonates.y == invalidCoordonates.y)
 		{
 			break;
 		}
-		this->PlaceTile(coordonate, this->orientation);
+		this->PlaceTile(boardCoordonates, this->orientation);
 		break;
 	}
 }

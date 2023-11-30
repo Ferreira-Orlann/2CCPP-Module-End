@@ -37,6 +37,7 @@ std::bitset<SHAPE_MATRIX_SIZE> LayingGrass::ShapedTile::CreateShapeMatrix()
 	{
 		bitset[i] = shapesData[bitOffset + i];
 	}
+
 	return bitset;
 }
 
@@ -78,7 +79,6 @@ void LayingGrass::PlacedShapedTile::BuildCoordonatesVector(std::vector<LayingGra
 	auto matrix = this->GetShapeMatrix();
 	LayingGrass::PlacedTile::Coordonates center = this->GetCenterCoordonate();
 	LayingGrass::PlacedTile::Coordonates top_left(center.x - std::floorf(SHAPE_HEIGHT/2), center.y - std::floorf(SHAPE_HEIGHT / 2));
-	fprintf(stdout, "X-> %d,%d\n", top_left.x, top_left.y);
 	uint8_t x = 0;
 	uint8_t y = 0;
 	bool intermediateMatrix[SHAPE_HEIGHT][SHAPE_HEIGHT] = { 0 };
@@ -107,25 +107,18 @@ void LayingGrass::PlacedShapedTile::BuildCoordonatesVector(std::vector<LayingGra
 		AnticlockwiseRotateIntermediateMatrix(intermediateMatrix, 1);
 		break;
 	}
-
 	for (int i = 0; i < SHAPE_HEIGHT; i++)
 	{
-		for (int j = 0; i < SHAPE_HEIGHT; j++)
+		for (int j = 0; j < SHAPE_HEIGHT; j++)
 		{
 			bool bit = intermediateMatrix[i][j];
 			if (!bit)
 				continue;
-			LayingGrass::PlacedTile::Coordonates coordonates(x + top_left.x, y + top_left.y);
-			fprintf(stdout, "%d,%d\n", coordonates.x, coordonates.y);
+			LayingGrass::PlacedTile::Coordonates coordonates(i + top_left.x, j + top_left.y);
 			contener.push_back(coordonates);
-			x++;
-			if (x == SHAPE_HEIGHT)
-			{
-				x = 0;
-				y++;
-			}
 		}
 	}
+
 }
 
 PlayerId LayingGrass::PlacedTile::GetOwner()

@@ -8,9 +8,9 @@ namespace LayingGrass
 	class LayingGrassVisual : public LayingGrassInstance<VisualPlayer>
 	{
 	private:
-		LayingGrass::PlacedShapedTile::Orientation orientation = LayingGrass::PlacedShapedTile::Orientation::TOP;
 		void WaitingForPlayers();
 		void DrawBoard();
+		void DrawNextTile();
 		LayingGrass::PlacedTile::Coordonates BoardProcessInputs();
 	public:
 		LayingGrassVisual();
